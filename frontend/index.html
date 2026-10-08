@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stemscope</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23101216'/%3E%3Cg fill='%23f5b31d'%3E%3Crect x='6' y='12' width='3' height='8' rx='1.5'/%3E%3Crect x='11' y='7' width='3' height='18' rx='1.5'/%3E%3Crect x='16' y='10' width='3' height='12' rx='1.5'/%3E%3Crect x='21' y='5' width='3' height='22' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M4.5 15.5V19a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-3.5"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M4.5 15.5V19a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-3.5"/></symbol>
+      <symbol id="i-library" viewBox="0 0 24 24"><path d="m12 3.5 8.5 4.25L12 12 3.5 7.75z"/><path d="m3.5 12 8.5 4.25L20.5 12"/><path d="m3.5 16.25 8.5 4.25 8.5-4.25"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.2-4.4-9.1-8.7C1.5 8.1 3.3 4.5 6.8 4.5c2 0 3.3 1.1 4.2 2.4.9-1.3 2.2-2.4 4.2-2.4 3.5 0 5.3 3.6 3.9 6.8C19.2 15.6 12 20 12 20z"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.6"/><path d="M12 16.8h.01"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><rect fill="currentColor" stroke="none" x="6.5" y="5" width="4" height="14" rx="1"/><rect fill="currentColor" stroke="none" x="13.5" y="5" width="4" height="14" rx="1"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect fill="currentColor" stroke="none" x="6.5" y="6.5" width="11" height="11" rx="1.5"/></symbol>
+      <symbol id="i-loop" viewBox="0 0 24 24"><path d="m17 3 3 3-3 3"/><path d="M4 11v-1a4 4 0 0 1 4-4h12"/><path d="m7 21-3-3 3-3"/><path d="M20 13v1a4 4 0 0 1-4 4H4"/></symbol>
+      <symbol id="i-metronome" viewBox="0 0 24 24"><path d="M9.2 3.5h5.6L19 20.5H5z"/><path d="m12 16 5-8.5"/><path d="M7.5 15h9"/></symbol>
+      <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 2M10 2.5h4"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><path d="M5 4v16M10 4v16M15 4v16M20 4v16"/></symbol>
+      <symbol id="i-volume" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app" id="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <a class="brand" href="#" id="homeLink">Stem<span>scope</span></a>
+      <label class="filefield" id="fileField" title="Upload an MP3, WAV, FLAC, M4A, OGG or AIFF file">
+        <span class="ff-text" id="fileFieldText">Drop an MP3 here, or click to choose a song…</span>
+        <span class="ff-icon"><svg class="i"><use href="#i-upload"/></svg></span>
+        <input type="file" class="file-input" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,.aif,.aiff,audio/*" hidden>
+      </label>
+      <div class="chips" id="stemChips" title="Show only some stems (hidden stems are silent)">
+        <span class="chips-label">Show</span>
+      </div>
+      <label class="btn-amber upload">Upload<input type="file" class="file-input" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,.aif,.aiff,audio/*" hidden></label>
+    </header>
+
+    <!-- Icon rail -->
+    <nav class="rail">
+      <button class="rail-btn" id="sidebarToggle" title="Toggle library"><svg class="i"><use href="#i-menu"/></svg></button>
+      <button class="rail-btn on" data-libview="all"><svg class="i"><use href="#i-library"/></svg><span>Library</span></button>
+      <button class="rail-btn" data-libview="favorites"><svg class="i"><use href="#i-heart"/></svg><span>Favorites</span></button>
+      <div class="rail-spacer"></div>
+      <button class="rail-btn" id="helpBtn"><svg class="i"><use href="#i-help"/></svg><span>Help</span></button>
+    </nav>
+
+    <!-- Library sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <label class="search">
+        <svg class="i"><use href="#i-search"/></svg>
+        <input id="search" type="search" placeholder="Search library…" autocomplete="off" spellcheck="false">
+        <kbd>⌘K</kbd>
+      </label>
+      <div class="side-head"><span id="listTitle">Recent</span><span class="count" id="listCount"></span></div>
+      <div class="song-list" id="songList"></div>
+      <div class="side-head">Tags <button class="link" id="clearTag" hidden>clear</button></div>
+      <div class="tags" id="tagList"></div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main" id="main">
+      <section class="view" id="welcomeView">
+        <div class="dropzone" id="dropzone">
+          <div class="dz-art" aria-hidden="true">
+            <span style="--c:#ec5f74;--h:45%"></span><span style="--c:#f08a3e;--h:85%"></span><span style="--c:#e9b949;--h:62%"></span><span style="--c:#62c972;--h:100%"></span><span style="--c:#a98bfa;--h:52%"></span><span style="--c:#8fa5cc;--h:72%"></span>
+          </div>
+          <h1>Drop a song to split it into stems</h1>
+          <p>Demucs separates vocals, drums, bass, guitar, piano and everything else. PANNs maps which instruments
+            play when, and Stemscope measures key, tempo and loudness.</p>
+          <label class="btn-amber big">Choose a song<input type="file" class="file-input" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,.aif,.aiff,audio/*" hidden></label>
+          <p class="hint">Runs entirely on this Mac · about a minute for a 4-minute song</p>
+        </div>
+      </section>
+
+      <section class="view" id="processingView" hidden>
+        <div class="progress-card">
+          <div class="pc-label">Processing</div>
+          <div class="pc-file" id="pcFile"></div>
+          <div class="pc-stage" id="pcStage">Uploading…</div>
+          <div class="bar"><div class="bar-fill" id="pcBar"></div></div>
+          <div class="pc-meta" id="pcMeta"></div>
+          <ol class="pc-steps" id="pcSteps">
+            <li data-step="decode">Decode audio</li>
+            <li data-step="separate">Separate stems <em>Demucs htdemucs_6s</em></li>
+            <li data-step="write">Write stems &amp; waveforms</li>
+            <li data-step="recognize">Recognize instruments <em>PANNs · AudioSet</em></li>
+            <li data-step="measure">Measure key, tempo &amp; loudness</li>
+          </ol>
+          <div class="pc-error" id="pcError" hidden></div>
+        </div>
+      </section>
+
+      <section class="view" id="workspaceView" hidden>
+        <div class="stats">
+          <div class="stat-row r7" id="statsTop"></div>
+          <div class="stat-row r6" id="statsStems"></div>
+        </div>
+
+        <div class="timeline-wrap" id="timelineWrap">
+          <div class="scroller" id="scroller">
+            <div class="rows" id="rows"><div id="headRows"></div><div id="trackRows"></div><div id="detectRows"></div></div>
+          </div>
+          <div class="loop-shade" id="loopShade" hidden></div>
+          <div class="playhead" id="playhead"></div>
+          <div class="tooltip" id="tooltip" hidden></div>
+        </div>
+
+        <section class="analysis">
+          <div class="analysis-head">
+            <h2>Instrument events</h2>
+            <span class="badge">PANNs · AudioSet</span>
+            <div class="spacer"></div>
+            <label class="sens">Detection sensitivity
+              <input type="range" id="sensitivity" min="0" max="100" value="50" style="--c:var(--amber)">
+              <output id="sensOut">50</output>
+            </label>
+          </div>
+          <div class="analysis-body">
+            <div class="col"><h3>Summary</h3><div id="summary" class="summary"></div></div>
+            <div class="col"><h3>Event log</h3><div id="events" class="events"></div></div>
+          </div>
+          <p class="method" id="method"></p>
+        </section>
+      </section>
+    </main>
+
+    <!-- Transport -->
+    <footer class="transport" id="transport" hidden>
+      <div class="np">
+        <div class="np-top">
+          <div class="cover" id="npCover"></div>
+          <div class="np-title" id="npTitle"></div>
+        </div>
+        <div class="np-meta" id="npMeta"></div>
+        <div class="np-date" id="npDate"></div>
+        <div class="np-actions">
+          <button class="sq-btn" id="favBtn" title="Add to favorites"><svg class="i"><use href="#i-heart"/></svg></button>
+          <div class="export">
+            <button class="btn-amber small" id="exportBtn"><svg class="i"><use href="#i-download"/></svg>Export<svg class="i chev"><use href="#i-chevron"/></svg></button>
+            <div class="menu up" id="exportMenu" hidden>
+              <button data-export="mix">Current mix <small>WAV · exactly what you hear now</small></button>
+              <button data-export="zip">All stems <small>ZIP · six FLAC files</small></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tp">
+        <div class="tp-groups">
+          <div class="grp">
+            <span class="grp-label">Transport</span>
+            <div class="grp-body">
+              <button class="tbtn" id="stopBtn" title="Stop and return to start (Home)"><svg class="i"><use href="#i-stop"/></svg></button>
+              <button class="play-btn" id="playBtn" title="Play / pause (Space)" disabled>
+                <svg class="i i-play"><use href="#i-play"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg>
+              </button>
+              <label class="vol" title="Master volume"><svg class="i"><use href="#i-volume"/></svg>
+                <input type="range" id="masterVol" min="0" max="1" step="0.01" value="0.9" style="--c:#c9ced8" aria-label="Master volume">
+              </label>
+            </div>
+          </div>
+          <div class="grp">
+            <span class="grp-label">Position</span>
+            <div class="grp-body pos"><span id="curTime">00:00</span><span class="dur" id="totTime">/ 00:00</span></div>
+          </div>
+          <div class="grp">
+            <span class="grp-label">Loop</span>
+            <div class="grp-body">
+              <button class="pill" id="loopBtn" title="Loop the selected region (L). Drag across the time ruler to set it."><svg class="i"><use href="#i-loop"/></svg>Loop</button>
+              <span class="tbox" id="loopStart">--:--.--</span><span class="dash">–</span><span class="tbox" id="loopEnd">--:--.--</span>
+            </div>
+          </div>
+          <div class="grp">
+            <span class="grp-label">Listen</span>
+            <div class="grp-body seg" id="abSeg" title="Compare the stems with the original file">
+              <button data-mode="stems" class="on">Stems</button><button data-mode="original">Original</button>
+            </div>
+          </div>
+          <div class="grp">
+            <span class="grp-label">Click track <span class="beta">BETA</span></span>
+            <div class="grp-body">
+              <button class="pill" id="clickBtn" title="Metronome on the detected beats (C)" disabled><svg class="i"><use href="#i-metronome"/></svg><span>Off</span></button>
+              <button class="pill" id="countBtn" title="Four clicks before playback starts" disabled><svg class="i"><use href="#i-timer"/></svg>Count-in</button>
+              <button class="pill" id="gridBtn" title="Show beat and bar lines" disabled><svg class="i"><use href="#i-grid"/></svg>Grid</button>
+              <div class="seg small" id="clickRate" title="Half / normal / double time">
+                <button data-rate="0.5">/2</button><button data-rate="1" class="on">1×</button><button data-rate="2">×2</button>
+              </div>
+              <label class="vol" title="Click volume"><svg class="i"><use href="#i-volume"/></svg>
+                <input type="range" id="clickVol" min="0" max="1" step="0.01" value="0.6" style="--c:var(--amber)" aria-label="Click volume">
+              </label>
+              <span class="pct" id="clickVolOut">60%</span>
+            </div>
+          </div>
+          <div class="grp">
+            <span class="grp-label">Zoom</span>
+            <div class="grp-body">
+              <button class="tbtn" id="zoomOut" title="Zoom out">−</button>
+              <input type="range" id="zoomSlider" min="0" max="100" value="0" style="--c:#c9ced8" aria-label="Zoom">
+              <button class="tbtn" id="zoomIn" title="Zoom in">+</button>
+              <button class="pill" id="zoomFit">Fit</button>
+            </div>
+          </div>
+        </div>
+        <canvas class="overview" id="overview" title="Click to jump"></canvas>
+        <div class="tp-status" id="tpStatus"></div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="popover" id="helpPop" hidden>
+    <h4>Keyboard</h4>
+    <dl>
+      <dt>Space</dt><dd>Play / pause</dd>
+      <dt>← →</dt><dd>Skip 5 s (⇧ for 1 s)</dd>
+      <dt>Home</dt><dd>Back to start</dd>
+      <dt>L</dt><dd>Loop on / off</dd>
+      <dt>C</dt><dd>Click track on / off</dd>
+      <dt>⌘K</dt><dd>Search library</dd>
+    </dl>
+    <h4>Mouse</h4>
+    <dl>
+      <dt>Drag ruler</dt><dd>Set a loop region</dd>
+      <dt>⌥-click section</dt><dd>Loop that section</dd>
+      <dt>⌘-scroll / pinch</dt><dd>Zoom the timeline</dd>
+      <dt>⌥-click S</dt><dd>Solo only that stem</dd>
+      <dt>Double-click fader</dt><dd>Reset to 0 dB</dd>
+    </dl>
+  </div>
+  <div class="drop-overlay" id="dropOverlay" hidden><div>Drop to analyze</div></div>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

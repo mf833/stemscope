@@ -1,0 +1,13 @@
+# Python virtual environment
+.venv/
+venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Runtime data (uploads, separated stems, job output)
+data/
+
+# OS / editor
+.DS_Store

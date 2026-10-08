@@ -1,0 +1,13 @@
+# Tested with Python 3.11, torch 2.14, demucs 4.1.0 on Apple silicon.
+torch>=2.4
+demucs>=4.1          # 4.1 adds the progress callback used for the progress bar
+panns-inference==0.1.1
+soundfile>=0.12      # bundles libsndfile with MP3 support, so no ffmpeg needed
+numpy>=1.24
+scipy>=1.10
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+librosa>=0.10          # key + beat tracking (also pulled in by panns-inference)
+pyloudnorm>=0.1        # LUFS / loudness range
+mutagen>=1.47          # embedded cover art
